@@ -20,10 +20,8 @@ const connectDB = async () => {
   // });
 
   try {
-    // const conn = await mongoose.connect(process.env.MONGO_URL)
-    const conn = await mongoose.connect(
-      "mongodb+srv://emonhossion29:emon123456@cluster0.zo4ye9x.mongodb.net/ecommerce"
-    );
+    const conn = await mongoose.connect(process.env.MONGO_URL)
+   
     console.log(
       `Connected To Mongodb Database ${conn.connection.host}`.bgBlue.black
     );

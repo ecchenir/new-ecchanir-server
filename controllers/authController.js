@@ -84,8 +84,8 @@ export const loginController = async(req,res)=>{
         }
 
             //token
-            // const token = await JWT.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn: '10d',});
-            const token = await JWT.sign({_id:user._id},"ECCHANIRNIRECCHA",{expiresIn: '10d',});
+            const token = await JWT.sign({_id:user._id},process.env.JWT_SECRET,{expiresIn: '10d',});
+        
             res.status(200).send({
                 success:true,
                 message:'Login Successfully',

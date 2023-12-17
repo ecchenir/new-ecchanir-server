@@ -6,7 +6,7 @@ export const requireSignIn = async (req,res,next) =>{
     try {
         const decode = JWT.verify(req.headers.authorization, process.env.JWT_SECRET);
         // const decode = JWT.verify(req.headers.authorization,  "ECCHANIRNIRECCHA");
-        // req.user = decode;
+        req.user = decode;
         // console.log('❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️');
         next()
     } catch (error) {

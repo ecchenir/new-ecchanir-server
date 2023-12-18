@@ -1,27 +1,54 @@
-import express from 'express'
-import formidable from 'express-formidable';
-import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js"
-import { categoryController, createCategoryController, deleteCategoryController, singleCategoryController, updateCategoryController, categoryPhotoController } from "../controllers/categoryController.js"
+import express from "express";
+import formidable from "express-formidable";
+import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+import {
+  categoryController,
+  createCategoryController,
+  deleteCategoryController,
+  singleCategoryController,
+  updateCategoryController,
+  categoryPhotoController,
+  createSubCategoryController,
+} from "../controllers/categoryController.js";
 
-const router = express.Router()
+const router = express.Router();
 
 //routes
 //create category
-router.post('/create-category', requireSignIn, isAdmin, formidable(), createCategoryController);
+router.post(
+  "/create-category",
+  requireSignIn,
+  isAdmin,
+  formidable(),
+  createCategoryController
+);
 
-// get photo 
-router.get('/category-photo/:id', categoryPhotoController);
+// create sub category
+router.post("/create-subcategory/:id", createSubCategoryController);
+
+// get photo
+router.get("/category-photo/:id", categoryPhotoController);
 
 //update category
-router.put('/update-category/:id', requireSignIn, isAdmin, updateCategoryController);
+router.put(
+  "/update-category/:id",
+  requireSignIn,
+  isAdmin,
+  updateCategoryController
+);
 
 //getAll category
-router.get('/get-category', categoryController);
+router.get("/get-category", categoryController);
 
 //single category
-router.get('/single-category/:slug', singleCategoryController);
+router.get("/single-category/:slug", singleCategoryController);
 
 //delete category
-router.delete('/delete-category/:id', requireSignIn, isAdmin, deleteCategoryController);
+router.delete(
+  "/delete-category/:id",
+  requireSignIn,
+  isAdmin,
+  deleteCategoryController
+);
 
-export default router
+export default router;

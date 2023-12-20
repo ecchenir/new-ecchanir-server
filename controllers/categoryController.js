@@ -74,47 +74,7 @@ export const createSubCategoryController = async (req, res) => {
   }
 };
 
-// router.post(
-//   "/api/v1/category/:categoryId/create-subcategory",
-//   async (req, res) => {
-//     try {
-//       const { categoryId } = req.params;
-//       console.log(categoryId);
-//       const { name } = req.body;
-
-//       console.log(name);
-
-//       console.log(
-//         "Received request to create subcategory under category:",
-//         categoryId
-//       );
-//       console.log("Subcategory name:", name);
-
-//       const category = await Category.findById(categoryId);
-
-//       if (!category) {
-//         return res
-//           .status(404)
-//           .json({ success: false, error: "Category not found" });
-//       }
-
-//       const newSubcategory = { name };
-//       category.subcategories.push(newSubcategory);
-
-//       await category.save();
-
-//       console.log("Subcategory created successfully:", newSubcategory);
-
-//       res.status(201).json({ success: true, subcategory: newSubcategory });
-//     } catch (error) {
-//       console.error(error);
-//       res
-//         .status(500)
-//         .json({ success: false, error: "Error in creating subcategory" });
-//     }
-//   }
-// );
-
+ 
 //updateCategoryController
 export const updateCategoryController = async (req, res) => {
   try {

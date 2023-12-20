@@ -26,6 +26,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    selectedSubcategory: {
+        type: String,
+        required: true
+    },
     category: {
         type: mongoose.ObjectId,
         ref: 'Category',
@@ -39,19 +43,12 @@ const productSchema = new mongoose.Schema({
         }
     ],
 
-    quantity: {
-        type: String,
-        required: true
-    },
-    rating: {
-        type: String,
-        required: true
-    },
 
     photo: {
         data: Buffer,
         contentType: String
     },
+    
 
 
 }, { timestamps: true })

@@ -13,9 +13,8 @@ export const createProductController = async (req, res) => {
       description,
       price,
       category,
-      rating,
-      quantity,
       selectedOptions,
+      selectedSubcategory,
     } = req.fields;
     const { photo } = req.files;
     const selectedOptionArray = JSON.parse(selectedOptions);
@@ -38,10 +37,9 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Category required" });
       case !selectedOptions:
         return res.status(500).send({ error: "Size Selected required" });
-      case !rating:
-        return res.status(500).send({ error: "Rating required" });
-      case !quantity:
-        return res.status(500).send({ error: "Quantity required" });
+      case !selectedSubcategory:
+        return res.status(500).send({ error: "selectedSubcategory  required" });
+ 
       case photo && photo.size > 5000000:
         return res
           .status(500)

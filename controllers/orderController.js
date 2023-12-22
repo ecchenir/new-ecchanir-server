@@ -17,8 +17,8 @@ export const createOrderController = async (req, res) => {
       address,
       selectedDistrict,
       productNumber,
-      size,
       selectedDivision,
+      size,
     } = req.fields;
     // const {photo} = req.files;
     //validation

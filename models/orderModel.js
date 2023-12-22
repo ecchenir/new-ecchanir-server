@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "complete", "delete"],
+      enum: ["pending", "complete", "cancel"],
       default: "pending", // Set a default value if needed
     },
     productNumber: {

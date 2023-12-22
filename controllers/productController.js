@@ -170,9 +170,8 @@ export const updateProductController = async (req, res) => {
       photo,
       description,
       price,
-      category,
-      rating,
-      quantity,
+      category,    
+     
     } = req.fields;
     //validation
     switch (true) {

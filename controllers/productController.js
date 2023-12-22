@@ -14,6 +14,7 @@ export const createProductController = async (req, res) => {
       price,
       category,
       selectedOptions,
+      productType,
       selectedSubcategory,
     } = req.fields;
     const { photo } = req.files;

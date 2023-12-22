@@ -42,7 +42,11 @@ const productSchema = new mongoose.Schema({
             required: true
         }
     ],
-
+    productType: {
+        type: String,
+        enum: ["local", "trending"],
+        default: "local", // Set a default value if needed
+      },
 
     photo: {
         data: Buffer,

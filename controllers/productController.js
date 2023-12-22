@@ -40,7 +40,7 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Size Selected required" });
       case !selectedSubcategory:
         return res.status(500).send({ error: "selectedSubcategory  required" });
- 
+
       case photo && photo.size > 5000000:
         return res
           .status(500)
@@ -171,8 +171,7 @@ export const updateProductController = async (req, res) => {
       photo,
       description,
       price,
-      category,    
-     
+      category,
     } = req.fields;
     //validation
     switch (true) {
@@ -267,7 +266,7 @@ export const productCountController = async (req, res) => {
 // product list base on page
 export const productListController = async (req, res) => {
   try {
-    const perPage = 10;
+    const perPage = 12;
     const page = req.params.page ? req.params.page : 1;
     const products = await productModel
       .find({})

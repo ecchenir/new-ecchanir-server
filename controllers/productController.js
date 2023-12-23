@@ -17,9 +17,10 @@ export const createProductController = async (req, res) => {
       productType,
       selectedSubcategory,
     } = req.fields;
+
     const { photo } = req.files;
     const selectedOptionArray = JSON.parse(selectedOptions);
-    console.log(selectedOptionArray);
+    // console.log(selectedOptionArray);
 
     //validation
     switch (true) {

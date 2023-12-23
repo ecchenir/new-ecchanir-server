@@ -1,51 +1,52 @@
 import mongoose from "mongoose";
 
-const latestProductSchema = new mongoose.Schema({
-
+const latestProductSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     slug: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     description: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     price: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
     productNumber: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
+    },
+    selectedSubcategory: {
+      type: String,
+      required: true,
     },
     category: {
-        type: mongoose.ObjectId,
-        ref: 'Category',
-        required: true
+      type: mongoose.ObjectId,
+      ref: "Category",
+      required: true,
     },
     selectedOptions: {
-        type: Array,
-        required: false,
+      type: Array,
+      required: false,
+    },
+    productType: {
+      type: String,
+      enum: ["local", "trending"],
+      default: "local", // Set a default value if needed
     },
 
-    quantity: {
-        type: String,
-        required: true
-    },
-    rating: {
-        type: String,
-        required: true
-    },
     photo: {
-        data: Buffer,
-        contentType: String
+      data: Buffer,
+      contentType: String,
     },
+  },
+  { timestamps: true }
+);
 
-
-}, { timestamps: true })
-
-export default mongoose.model('LatestProducts', latestProductSchema)
+export default mongoose.model("LatestProducts", latestProductSchema);

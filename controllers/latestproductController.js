@@ -47,7 +47,7 @@ export const createLatestProductController = async (req, res) => {
           .status(500)
           .send({ error: "photo is Required and should be less then 1mb" });
     }
-    const products = new productModel({
+    const products = new  latestproductModel({
       ...req.fields,
       selectedOptions: selectedOptionArray,
       slug: slugify(name),

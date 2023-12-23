@@ -3,8 +3,8 @@ import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
 import formidable from "express-formidable";
 import {
-  LatestProductPhotoController,
   createLatestProductController,
+  LatestProductPhotoController,
   deleteLatestProductController,
   getLatestProductController,
   getSingleLatestProductController,

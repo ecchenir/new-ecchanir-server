@@ -35,9 +35,7 @@ export const createLatestProductController = async (req, res) => {
       case !selectedSubcategory:
         return res.status(500).send({ error: "selectedSubcategory is required" });
       case !category:
-        return res.status(500).send({ error: "Category required" });
-      case !quantity:
-        return res.status(500).send({ error: "Quantity required" });
+        return res.status(500).send({ error: "Category required" });      
       case photo && photo.size > 5000000:
         return res
           .status(500)

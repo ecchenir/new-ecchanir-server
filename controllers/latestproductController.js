@@ -45,6 +45,7 @@ export const createLatestProductController = async (req, res) => {
     }
     const products = new latestproductModel({
       ...req.fields,
+      selectedOptions:selectedOptionArray,
       slug: slugify(name),
     });
     if (photo) {

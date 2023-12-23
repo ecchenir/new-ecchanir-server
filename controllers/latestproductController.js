@@ -5,45 +5,51 @@ import fs from "fs";
 
 export const createLatestProductController = async (req, res) => {
   try {
-     let {
-        name,
-        slug,      
-        productNumber,
-        description,
-        price,
-        category,
-        selectedOptions,
-        productType,
-        selectedSubcategory,
+    let {
+      name,
+      slug,
+      discount,
+      productNumber,
+      description,
+      price,
+      category,
+      selectedOptions,
+      productType,
+      selectedSubcategory,
     } = req.fields;
 
     const { photo } = req.files;
     const selectedOptionArray = JSON.parse(selectedOptions);
+    // console.log(selectedOptionArray);
+
     //validation
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name required" });
-
       case !description:
         return res.status(500).send({ error: "Description required" });
       case !price:
         return res.status(500).send({ error: "Price required" });
-      case !selectedOptions:
-        return res.status(500).send({ error: "Size Selected required" });
+      case !discount:
+        return res.status(500).send({ error: " Discount Number required" });
+
       case !productNumber:
         return res.status(500).send({ error: "Product Number required" });
-      case !selectedSubcategory:
-        return res.status(500).send({ error: "selectedSubcategory is required" });
       case !category:
-        return res.status(500).send({ error: "Category required" });      
+        return res.status(500).send({ error: "Category required" });
+      case !selectedOptions:
+        return res.status(500).send({ error: "Size Selected required" });
+      case !selectedSubcategory:
+        return res.status(500).send({ error: "selectedSubcategory  required" });
+
       case photo && photo.size > 5000000:
         return res
           .status(500)
           .send({ error: "photo is Required and should be less then 1mb" });
     }
-    const products = new latestproductModel({
+    const products = new productModel({
       ...req.fields,
-      selectedOptions:selectedOptionArray,
+      selectedOptions: selectedOptionArray,
       slug: slugify(name),
     });
     if (photo) {

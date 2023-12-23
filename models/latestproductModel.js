@@ -18,6 +18,10 @@ const latestProductSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    discount: {
+      type: Number,
+      required: true,
+    },
     productNumber: {
       type: String,
       required: true,
@@ -31,10 +35,13 @@ const latestProductSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    selectedOptions: {
-      type: Array,
-      required: false,
-    },
+
+    selectedOptions: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     productType: {
       type: String,
       enum: ["local", "trending"],

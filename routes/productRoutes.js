@@ -42,7 +42,7 @@ router.get("/get-product", getProductController);
 
 //single products
 
-router.get("/get-product/:slug", getSingleProductController);
+router.get("/get-product/:id", getSingleProductController);
 
 //get photo
 router.get("/product-photo/:pid", productPhotoController);

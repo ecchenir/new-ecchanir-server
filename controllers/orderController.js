@@ -100,7 +100,7 @@ export const getOrderController = async (req, res) => {
 
 export const getSingleOrderController = async (req, res) => {
   try {
-    const product = await orderModel.findOne({ id: req.params._id });
+    const product = await orderModel.findOne({ _id: req.params.id });
     res.status(200).send({
       success: true,
       message: "Single order fetched",

@@ -47,7 +47,7 @@ export const createLatestProductController = async (req, res) => {
           .status(500)
           .send({ error: "photo is Required and should be less then 1mb" });
     }
-    const products = new  latestproductModel({
+    const products = new latestproductModel({
       ...req.fields,
       selectedOptions: selectedOptionArray,
       slug: slugify(name),
@@ -104,7 +104,7 @@ export const getLatestProductController = async (req, res) => {
 export const getSingleLatestProductController = async (req, res) => {
   try {
     const product = await latestproductModel
-      .findOne({ slug: req.params.slug })
+      .findOne({ _id: req.params.id })
       .select("-photo")
       .populate("category");
     res.status(200).send({

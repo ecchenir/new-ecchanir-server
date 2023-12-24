@@ -10,15 +10,13 @@ export const createOrderController = async (req, res) => {
       slug,
       status,
       phone,
-      quantities,
-      delivery,
-      total,
-      amount,
+      products,
+      deliveryCharge,
+      totalWithDelivery,
+      subTotal,
       address,
       selectedDistrict,
-      productNumber,
       selectedDivision,
-      size,
     } = req.fields;
     // const {photo} = req.files;
     //validation
@@ -28,41 +26,39 @@ export const createOrderController = async (req, res) => {
 
       case !phone:
         return res.status(500).send({ error: "phone required" });
-      case !total:
-        return res.status(500).send({ error: " total required" });
-      case !amount:
-        return res.status(500).send({ error: " amount required" });
+      case !totalWithDelivery:
+        return res.status(500).send({ error: " totalWithDelivery required" });
+      case !subTotal:
+        return res.status(500).send({ error: " subTotal required" });
       case !selectedDistrict:
         return res.status(500).send({ error: " selectedDistrict   required" });
       case !selectedDivision:
         return res.status(500).send({ error: " selectedDivision   required" });
-      case !productNumber:
-        return res.status(500).send({ error: "product Number required" });
-      case !delivery:
+      case !deliveryCharge:
         return res.status(500).send({ error: "Delivery required" });
-      case !quantities:
+      case !products:
         return res.status(500).send({ error: "Quantity required" });
       case !address:
         return res.status(500).send({ error: "address required" });
-
-      case !size:
-        return res.status(500).send({ error: "size required" });
 
       // case photo && photo.size > 5000000:
       //     return res
       //       .status(500)
       //       .send({ error: "photo is Required and should be less then 1mb" });
     }
-    const products = new orderModel({ ...req.fields, slug: slugify(names) });
+    const orderProducts = new orderModel({
+      ...req.fields,
+      slug: slugify(names),
+    });
     // if(photo){
     //     products.photo.data = fs.readFileSync(photo.path)
     //     products.photo.contentType = photo.type
     // }
-    await products.save();
+    await orderProducts.save();
     res.status(201).send({
       success: true,
       message: "Order Created Successfully",
-      products,
+      orderProducts,
     });
   } catch (error) {
     console.log(error);
@@ -78,13 +74,13 @@ export const createOrderController = async (req, res) => {
 
 export const getOrderController = async (req, res) => {
   try {
-    const products = await orderModel.find({});
+    const orderProducts = await orderModel.find({});
     res.status(200).send({
       success: true,
       countTotal: products.length,
       message: "All Orders",
 
-      products,
+      orderProducts,
     });
   } catch (error) {
     console.log(error);
@@ -100,11 +96,11 @@ export const getOrderController = async (req, res) => {
 
 export const getSingleOrderController = async (req, res) => {
   try {
-    const product = await orderModel.findOne({ _id: req.params.id });
+    const orderProducts = await orderModel.findOne({ _id: req.params.id });
     res.status(200).send({
       success: true,
       message: "Single order fetched",
-      product,
+      orderProducts,
     });
   } catch (error) {
     console.log(error);
@@ -120,10 +116,12 @@ export const getSingleOrderController = async (req, res) => {
 
 export const orderPhotoController = async (req, res) => {
   try {
-    const product = await orderModel.findById(req.params.pid).select("photo");
-    if (product.photo.data) {
-      res.set("Content-type", product.photo.contentType);
-      return res.status(200).send(product.photo.data);
+    const orderProducts = await orderModel
+      .findById(req.params.pid)
+      .select("photo");
+    if (orderProducts.photo.data) {
+      res.set("Content-type", orderProducts.photo.contentType);
+      return res.status(200).send(orderProducts.photo.data);
     }
   } catch (error) {
     console.log(error);

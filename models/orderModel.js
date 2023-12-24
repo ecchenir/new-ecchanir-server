@@ -14,28 +14,24 @@ const orderSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    products: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
+
     status: {
       type: String,
       enum: ["pending", "complete", "cancel"],
       default: "pending", // Set a default value if needed
     },
-    productNumber: {
-      type: String,
-      required: true,
-    },
+
     selectedDistrict: {
       type: String,
       required: true,
     },
     selectedDivision: {
-      type: String,
-      required: true,
-    },
-    // photo: {
-    //     data: Buffer,
-    //     contentType: String
-    // },
-    quantities: {
       type: String,
       required: true,
     },
@@ -45,20 +41,15 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    size: {
-      type: String,
-      required: true,
-    },
-
-    delivery: {
+    deliveryCharge: {
       type: Number,
       required: true,
     },
-    amount: {
+    totalWithDelivery: {
       type: Number,
       required: true,
     },
-    total: {
+    subTotal: {
       type: Number,
       required: true,
     },

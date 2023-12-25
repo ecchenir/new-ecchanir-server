@@ -4,7 +4,7 @@ const orderSchema = new mongoose.Schema(
   {
     names: {
       type: String,
-      required: true,
+      required: false,
     },
     slug: {
       type: String,
@@ -16,8 +16,22 @@ const orderSchema = new mongoose.Schema(
     },
     products: [
       {
-        type: String,
-        required: false,
+        quantity: {
+          type: String,
+          required: false,
+        },
+        selectedSize: {
+          type: String,
+          required: false,
+        },
+        productNumber: {
+          type: String,
+          required: false,
+        },
+        price: {
+          type: String,
+          required: false,
+        },
       },
     ],
 

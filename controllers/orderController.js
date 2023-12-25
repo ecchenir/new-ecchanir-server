@@ -10,34 +10,32 @@ export const createOrderController = async (req, res) => {
       slug,
       status,
       phone,
-      products,
       deliveryCharge,
-      totalWithDelivery,
       subTotal,
+      products,
       address,
       selectedDistrict,
+      totalWithDelivery,
       selectedDivision,
-    } = req.fields;
-    // const {photo} = req.files;
+    } = req.body;
+
     //validation
     switch (true) {
       case !names:
         return res.status(500).send({ error: "Name required" });
-
       case !phone:
         return res.status(500).send({ error: "phone required" });
       case !totalWithDelivery:
-        return res.status(500).send({ error: " totalWithDelivery required" });
+        return res.status(500).send({ error: " total required" });
       case !subTotal:
-        return res.status(500).send({ error: " subTotal required" });
+        return res.status(500).send({ error: " amount required" });
       case !selectedDistrict:
         return res.status(500).send({ error: " selectedDistrict   required" });
       case !selectedDivision:
         return res.status(500).send({ error: " selectedDivision   required" });
+
       case !deliveryCharge:
         return res.status(500).send({ error: "Delivery required" });
-      case !products:
-        return res.status(500).send({ error: "Quantity required" });
       case !address:
         return res.status(500).send({ error: "address required" });
 
@@ -46,19 +44,16 @@ export const createOrderController = async (req, res) => {
       //       .status(500)
       //       .send({ error: "photo is Required and should be less then 1mb" });
     }
-    const orderProducts = new orderModel({
-      ...req.fields,
-      slug: slugify(names),
-    });
+    const orderProduct = new orderModel({ ...req.body, slug: slugify(names) });
     // if(photo){
     //     products.photo.data = fs.readFileSync(photo.path)
     //     products.photo.contentType = photo.type
     // }
-    await orderProducts.save();
+    await orderProduct.save();
     res.status(201).send({
       success: true,
-      message: "Order Created Successfully",
-      orderProducts,
+      message: "Thanks for order Successfully",
+      orderProduct,
     });
   } catch (error) {
     console.log(error);
@@ -74,13 +69,13 @@ export const createOrderController = async (req, res) => {
 
 export const getOrderController = async (req, res) => {
   try {
-    const orderProducts = await orderModel.find({});
+    const product = await orderModel.find({});
     res.status(200).send({
       success: true,
-      countTotal: products.length,
+      countTotal: product.length,
       message: "All Orders",
 
-      orderProducts,
+      product,
     });
   } catch (error) {
     console.log(error);
@@ -95,12 +90,15 @@ export const getOrderController = async (req, res) => {
 //getSingleOrderController
 
 export const getSingleOrderController = async (req, res) => {
+  console.log(req.params.id);
   try {
-    const orderProducts = await orderModel.findOne({ _id: req.params.id });
+    const SingleProduct = await orderModel.findById(req.params.id);
+
+    console.log(SingleProduct);
     res.status(200).send({
       success: true,
       message: "Single order fetched",
-      orderProducts,
+      SingleProduct,
     });
   } catch (error) {
     console.log(error);
@@ -116,12 +114,10 @@ export const getSingleOrderController = async (req, res) => {
 
 export const orderPhotoController = async (req, res) => {
   try {
-    const orderProducts = await orderModel
-      .findById(req.params.pid)
-      .select("photo");
-    if (orderProducts.photo.data) {
-      res.set("Content-type", orderProducts.photo.contentType);
-      return res.status(200).send(orderProducts.photo.data);
+    const product = await orderModel.findById(req.params.pid).select("photo");
+    if (product.photo.data) {
+      res.set("Content-type", product.photo.contentType);
+      return res.status(200).send(product.photo.data);
     }
   } catch (error) {
     console.log(error);

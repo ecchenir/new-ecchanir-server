@@ -167,10 +167,10 @@ export const updateProductController = async (req, res) => {
     const {
       name,
       slug,
+      description,
       discount,
       productNumber,
       photo,
-      description,
       price,
       category,
     } = req.fields;
@@ -190,10 +190,6 @@ export const updateProductController = async (req, res) => {
       case !category:
         return res.status(500).send({ error: "Category required" });
 
-      case !rating:
-        return res.status(500).send({ error: "Rating required" });
-      case !quantity:
-        return res.status(500).send({ error: "Quantity required" });
       case photo && photo.size > 5000000:
         return res
           .status(500)
@@ -339,6 +335,7 @@ export const realtedProductController = async (req, res) => {
 };
 
 // get prdocyst by catgory
+
 export const productCategoryController = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
@@ -355,5 +352,38 @@ export const productCategoryController = async (req, res) => {
       error,
       message: "Error While Getting products",
     });
+  }
+};
+
+// create Tending Product
+
+export const updateTradingProduct = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  const updateOrder = req.body;
+
+  try {
+    // Attempt to update the order
+    const updateData = await productModel.findByIdAndUpdate(
+      { _id: id },
+      updateOrder,
+      { new: true }
+    );
+
+    // Check if the update was successful
+    if (updateData) {
+      return res.status(200).json({
+        message: "Create Tending Product SuccessFully",
+        order: updateData,
+      });
+    } else {
+      return res.status(404).json({ error: "Order Not Found" });
+    }
+  } catch (error) {
+    // Handle errors
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while updating the order" });
   }
 };

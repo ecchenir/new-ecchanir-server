@@ -12,6 +12,7 @@ import latestproductRoutes from "./routes/latestproductRoutes.js";
 import blogRoute from "./routes/blogRoute.js";
 import cors from "cors";
 import path from "path";
+import bodyParser from "body-parser";
 
 const __dirname = path.resolve();
 
@@ -29,6 +30,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(express.static(path.join(__dirname, "./client/build")));
+app.use(bodyParser.json({ limit: "500mb" }));
 
 //routes
 app.use("/api/v1/auth", authRoutes);

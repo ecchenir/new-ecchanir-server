@@ -37,7 +37,7 @@ router.get("/get-latestproduct", getLatestProductController);
 
 //single products
 
-router.get("/get-latestproduct/:id", getSingleLatestProductController);
+router.get("/get-latestproduct/:slug", getSingleLatestProductController);
 
 //get photo
 router.get("/latestproduct-photo/:pid", LatestProductPhotoController);

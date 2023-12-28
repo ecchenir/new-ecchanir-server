@@ -99,6 +99,16 @@ export const getProductController = async (req, res) => {
   }
 };
 
+export const getAllProducts = async (req, res) => {
+  try {
+    const allProduct = await productModel.find();
+    res.status(200).json(allProduct);
+    // console.log(allProduct);
+  } catch (error) {
+    res.status(501).json({ message: "product not found" });
+  }
+};
+
 //getSingleProductController
 
 export const getSingleProductController = async (req, res) => {

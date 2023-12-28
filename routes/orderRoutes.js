@@ -18,7 +18,6 @@ router.post("/create-order", createOrderController);
 //get orders
 router.get("/get-order", getOrderController);
 
-
 //get photo
 router.get("/order-photo/:pid", orderPhotoController);
 

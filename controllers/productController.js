@@ -13,12 +13,12 @@ export const createProductController = async (req, res) => {
       description,
       price,
       category,
+      photo,
       selectedOptions,
       productType,
       selectedSubcategory,
     } = req.fields;
 
-    const { photo } = req.files;
     const selectedOptionArray = JSON.parse(selectedOptions);
     // console.log(selectedOptionArray);
 
@@ -26,6 +26,8 @@ export const createProductController = async (req, res) => {
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name required" });
+      case !photo:
+        return res.status(500).send({ error: "photo is required" });
       case !description:
         return res.status(500).send({ error: "Description required" });
       case !price:
@@ -41,21 +43,13 @@ export const createProductController = async (req, res) => {
         return res.status(500).send({ error: "Size Selected required" });
       case !selectedSubcategory:
         return res.status(500).send({ error: "selectedSubcategory  required" });
-
-      case photo && photo.size > 5000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
     }
     const products = new productModel({
       ...req.fields,
       selectedOptions: selectedOptionArray,
       slug: slugify(name),
     });
-    if (photo) {
-      products.photo.data = fs.readFileSync(photo.path);
-      products.photo.contentType = photo.type;
-    }
+
     await products.save();
     res.status(201).send({
       success: true,
@@ -79,7 +73,6 @@ export const getProductController = async (req, res) => {
     const products = await productModel
       .find({})
       .populate("category")
-      .select("-photo")
       .limit(20)
       .sort({ createdAt: -1 });
     res.status(200).send({
@@ -115,7 +108,7 @@ export const getSingleProductController = async (req, res) => {
   try {
     const product = await productModel
       .findOne({ _id: req.params.id }) // Change 'slug' to '_id' here
-      .select("-photo")
+
       .populate("category");
     res.status(200).send({
       success: true,
@@ -277,7 +270,6 @@ export const productListController = async (req, res) => {
     const page = req.params.page ? req.params.page : 1;
     const products = await productModel
       .find({})
-      .select("-photo")
       .skip((page - 1) * perPage)
       .limit(perPage)
       .sort({ createdAt: -1 });
@@ -299,14 +291,13 @@ export const productListController = async (req, res) => {
 export const searchProductController = async (req, res) => {
   try {
     const { keyword } = req.params;
-    const resutls = await productModel
-      .find({
-        $or: [
-          { name: { $regex: keyword, $options: "i" } },
-          { description: { $regex: keyword, $options: "i" } },
-        ],
-      })
-      .select("-photo");
+    const resutls = await productModel.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ],
+    });
+
     res.json(resutls);
   } catch (error) {
     console.log(error);
@@ -327,7 +318,6 @@ export const realtedProductController = async (req, res) => {
         category: cid,
         _id: { $ne: pid },
       })
-      .select("-photo")
       .limit(3)
       .populate("category");
     res.status(200).send({
@@ -348,13 +338,15 @@ export const realtedProductController = async (req, res) => {
 
 export const productCategoryController = async (req, res) => {
   try {
-    const category = await categoryModel.findOne({ slug: req.params.slug });
+    const category = await categoryModel.findOne({  id: req.params.id });
     const products = await productModel.find({ category }).populate("category");
     res.status(200).send({
       success: true,
       category,
       products,
     });
+    console.log(category);
+    console.log(products);
   } catch (error) {
     console.log(error);
     res.status(400).send({

@@ -49,8 +49,8 @@ const latestProductSchema = new mongoose.Schema(
     },
 
     photo: {
-      data: Buffer,
-      contentType: String,
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

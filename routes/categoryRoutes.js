@@ -9,6 +9,7 @@ import {
   updateCategoryController,
   categoryPhotoController,
   createSubCategoryController,
+  singleCategoryControllerById
 } from "../controllers/categoryController.js";
 
 const router = express.Router();
@@ -38,10 +39,12 @@ router.put(
 );
 
 //getAll category
-router.get("/get-category", categoryController);
+router.get("/get-allcategory", categoryController);
 
 //single category
 router.get("/single-category/:slug", singleCategoryController);
+
+router.get("/singles-category/:id", singleCategoryControllerById);
 
 //delete category
 router.delete(

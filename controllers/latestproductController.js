@@ -13,12 +13,12 @@ export const createLatestProductController = async (req, res) => {
       description,
       price,
       category,
+      photo,
       selectedOptions,
       productType,
       selectedSubcategory,
     } = req.fields;
 
-    const { photo } = req.files;
     const selectedOptionArray = JSON.parse(selectedOptions);
     // console.log(selectedOptionArray);
 
@@ -26,6 +26,8 @@ export const createLatestProductController = async (req, res) => {
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name required" });
+      case !photo:
+        return res.status(500).send({ error: "photo is required" });
       case !description:
         return res.status(500).send({ error: "Description required" });
       case !price:
@@ -41,21 +43,13 @@ export const createLatestProductController = async (req, res) => {
         return res.status(500).send({ error: "Size Selected required" });
       case !selectedSubcategory:
         return res.status(500).send({ error: "selectedSubcategory  required" });
-
-      case photo && photo.size > 5000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
     }
     const products = new latestproductModel({
       ...req.fields,
       selectedOptions: selectedOptionArray,
       slug: slugify(name),
     });
-    if (photo) {
-      products.photo.data = fs.readFileSync(photo.path);
-      products.photo.contentType = photo.type;
-    }
+
     await products.save();
     res.status(201).send({
       success: true,
@@ -79,7 +73,6 @@ export const getLatestProductController = async (req, res) => {
     const products = await latestproductModel
       .find({})
       .populate("category")
-      .select("-photo")
       .limit(20)
       .sort({ createdAt: -1 });
     res.status(200).send({
@@ -104,8 +97,7 @@ export const getLatestProductController = async (req, res) => {
 export const getSingleLatestProductController = async (req, res) => {
   try {
     const product = await latestproductModel
-      .findOne({ _id: req.params.id })
-      .select("-photo")
+      .findById({ _id: req.params.id })
       .populate("category");
     res.status(200).send({
       success: true,
@@ -147,7 +139,7 @@ export const LatestProductPhotoController = async (req, res) => {
 
 export const deleteLatestProductController = async (req, res) => {
   try {
-    await latestproductModel.findByIdAndDelete(req.params.pid).select("-photo");
+    await latestproductModel.findByIdAndDelete(req.params.pid);
     res.status(200).send({
       success: true,
       message: "Successfully Product Deleted",

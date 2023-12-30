@@ -5,14 +5,10 @@ const categorySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  slug: {
-    type: String,
-    required: true,
-  },
 
   photo: {
-    data: Buffer,
-    contentType: String,
+    type: String,
+    required: true,
   },
 
   subCategory: [

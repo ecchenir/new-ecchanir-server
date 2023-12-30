@@ -8,38 +8,23 @@ const router = express.Router();
 export const createCategoryController = async (req, res) => {
   try {
     console.log(req.fields);
-    const { name = "", slug } = req.fields;
+    const { name, photo, subCategory } = req.fields;
 
-    const { photo } = req.files;
-    //validation
-    switch (true) {
-      case !name:
-        return res.status(500).send({ error: "Name required" });
-      // case !category:
-      // return res.status(500).send({error:'Category required'})
-      case photo && photo.size > 5000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
-    }
-    const category = new categoryModel({ ...req.fields, slug: slugify(name) });
-    if (photo) {
-      category.photo.data = fs.readFileSync(photo.path);
-      category.photo.contentType = photo.type;
-    }
+    const CategoryData = {
+      name,
+      photo,
+      subCategory,
+    };
+
+    const category = new categoryModel(CategoryData);
+
     await category.save();
-    res.status(201).send({
-      success: true,
-      message: "category Created Successfully",
-      category,
-    });
+    res.status(201).json({ message: " Category Create Successfully" });
   } catch (error) {
     console.log(error);
-    res.send(500).send({
-      success: false,
-      message: "Error in Create Product",
-      error,
-    });
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the Banner" });
   }
 };
 
@@ -74,7 +59,6 @@ export const createSubCategoryController = async (req, res) => {
   }
 };
 
- 
 //updateCategoryController
 export const updateCategoryController = async (req, res) => {
   try {
@@ -104,19 +88,10 @@ export const updateCategoryController = async (req, res) => {
 
 export const categoryController = async (req, res) => {
   try {
-    const category = await categoryModel.find({});
-    res.status(200).send({
-      success: true,
-      message: "All Category list",
-      category,
-    });
+    const category = await categoryModel.find();
+    res.status(200).json(category);
   } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error in get All category",
-      error,
-    });
+    res.status(501).json({ message: "category not found" });
   }
 };
 
@@ -159,6 +134,17 @@ export const singleCategoryController = async (req, res) => {
     });
   }
 };
+
+export const singleCategoryControllerById = async (req, res) => {
+  try {
+    const category = await categoryModel.findById({ id: req.params.id });
+    res.status(200).json(category);
+  } catch (error) {
+    console.log(error);
+    res.status(501).json({ message: "category not found" });
+  }
+};
+
 //deleteCategoryController
 
 export const deleteCategoryController = async (req, res) => {

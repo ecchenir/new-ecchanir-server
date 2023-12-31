@@ -9,10 +9,14 @@ const blogsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
 
   photo: {
-    data: Buffer,
-    contentType: String,
+    type: String,
+    required: true,
   },
 });
 

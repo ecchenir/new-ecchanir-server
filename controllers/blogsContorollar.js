@@ -7,23 +7,20 @@ const router = express.Router();
 export const createBlogsController = async (req, res) => {
   try {
     // console.log(req.fields);
-    const { name = "", slug } = req.fields;
+    const { name = "", slug, title, photo } = req.fields;
 
-    const { photo } = req.files;
     //validation
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name required" });
-      case photo && photo.size > 5000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less than 1mb" });
+      case !title:
+        return res.status(500).send({ error: "title required" });
+
+      case !photo:
+        return res.status(500).send({ error: "photo required" });
     }
     const newBlog = new blogsModal({ ...req.fields, slug: slugify(name) });
-    if (photo) {
-      newBlog.photo.data = fs.readFileSync(photo.path);
-      newBlog.photo.contentType = photo.type;
-    }
+
     await newBlog.save();
     res.status(201).send({
       success: true,
@@ -44,7 +41,6 @@ export const getBlogsController = async (req, res) => {
   try {
     const blogs = await blogsModal
       .find({})
-      .select("-photo")
       .limit(20)
       .sort({ createdAt: -1 });
     res.status(200).send({

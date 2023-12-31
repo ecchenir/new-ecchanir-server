@@ -171,6 +171,8 @@ export const updateLatestProductController = async (req, res) => {
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name required" });
+      case !photo:
+        return res.status(500).send({ error: "photo required" });
       case !description:
         return res.status(500).send({ error: "Description required" });
       case !price:
@@ -180,23 +182,12 @@ export const updateLatestProductController = async (req, res) => {
 
       case !productNumber:
         return res.status(500).send({ error: "Product Number required" });
-      case !category:
-        return res.status(500).send({ error: "Category required" });
-
-      case photo && photo.size > 5000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
     }
     const products = await latestproductModel.findByIdAndUpdate(
       req.params.pid,
       { ...req.fields, slug: slugify(name) },
       { new: true }
     );
-    if (photo) {
-      products.photo.data = fs.readFileSync(photo.path);
-      products.photo.contentType = photo.type;
-    }
     await products.save();
     res.status(201).send({
       success: true,

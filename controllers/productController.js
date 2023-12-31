@@ -149,94 +149,45 @@ export const deleteProductController = async (req, res) => {
 //updateProductController
 
 export const updateProductController = async (req, res) => {
-  const id = req.params.pid;
-  console.log(id);
-  const productData = req.body; // Use req.body instead of req.field
-  console.log(req.body);
-  console.log(req.field);
-
   try {
-    const updatedProduct = await productModel.findByIdAndUpdate(
-      { _id: id },
-      productData,
+    const { name, slug, description, discount, productNumber, photo, price } =
+      req.fields;
+    //validation
+    switch (true) {
+      case !name:
+        return res.status(500).send({ error: "Name required" });
+      case !description:
+        return res.status(500).send({ error: "Description required" });
+      case !photo:
+        return res.status(500).send({ error: "photo required" });
+      case !price:
+        return res.status(500).send({ error: "Price required" });
+      case !discount:
+        return res.status(500).send({ error: " Discount Number required" });
+
+      case !productNumber:
+        return res.status(500).send({ error: "Product Number required" });
+    }
+    const products = await productModel.findByIdAndUpdate(
+      req.params.pid,
+      { ...req.fields, slug: slugify(name) },
       { new: true }
     );
-
-    if (productData) {
-      return res.status(200).json({
-        message: "Product Update Successfully",
-        product: productData,
-      });
-    } else {
-      return res.status(404).json({ error: "Product not found" });
-    }
+    await products.save();
+    res.status(201).send({
+      success: true,
+      message: "Product Updated Successfully",
+      products,
+    });
   } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while updating the product" });
+    console.log(error);
+    res.send(500).send({
+      success: false,
+      message: "Error in Update Product",
+      error,
+    });
   }
 };
-
-
-
-
-
-// try {
-//   const {
-//     name,
-//     slug,
-//     description,
-//     discount,
-//     productNumber,
-//     photo,
-//     price,
-//     category,
-//   } = req.fields;
-//   //validation
-//   switch (true) {
-//     case !name:
-//       return res.status(500).send({ error: "Name required" });
-//     case !description:
-//       return res.status(500).send({ error: "Description required" });
-//     case !price:
-//       return res.status(500).send({ error: "Price required" });
-//     case !discount:
-//       return res.status(500).send({ error: " Discount Number required" });
-
-//     case !productNumber:
-//       return res.status(500).send({ error: "Product Number required" });
-//     case !category:
-//       return res.status(500).send({ error: "Category required" });
-
-//     case photo && photo.size > 5000000:
-//       return res
-//         .status(500)
-//         .send({ error: "photo is Required and should be less then 1mb" });
-//   }
-//   const products = await productModel.findByIdAndUpdate(
-//     req.params.pid,
-//     { ...req.fields, slug: slugify(name) },
-//     { new: true }
-//   );
-//   if (photo) {
-//     products.photo.data = fs.readFileSync(photo.path);
-//     products.photo.contentType = photo.type;
-//   }
-//   await products.save();
-//   res.status(201).send({
-//     success: true,
-//     message: "Product Updated Successfully",
-//     products,
-//   });
-// } catch (error) {
-//   console.log(error);
-//   res.send(500).send({
-//     success: false,
-//     message: "Error in Update Product",
-//     error,
-//   });
-// }
 
 // filters
 export const productFiltersController = async (req, res) => {

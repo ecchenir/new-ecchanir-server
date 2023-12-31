@@ -39,10 +39,7 @@ export const createBlogsController = async (req, res) => {
 
 export const getBlogsController = async (req, res) => {
   try {
-    const blogs = await blogsModal
-      .find({})
-      .limit(20)
-      .sort({ createdAt: -1 });
+    const blogs = await blogsModal.find({}).limit(20).sort({ createdAt: -1 });
     res.status(200).send({
       success: true,
       countTotal: blogs.length,

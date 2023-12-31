@@ -10,7 +10,7 @@ import {
   productCountController,
   productFiltersController,
   productListController,
-  productPhotoController,
+ 
   realtedProductController,
   searchProductController,
   updateProductController,
@@ -48,8 +48,8 @@ router.get("/get-allProduct", getAllProducts);
 
 router.get("/get-product/:id", getSingleProductController);
 
-//get photo
-router.get("/product-photo/:pid", productPhotoController);
+ 
+ 
 
 //delete product
 router.delete("/delete-product/:pid", deleteProductController);
@@ -70,7 +70,7 @@ router.get("/search/:keyword", searchProductController);
 router.get("/related-product/:pid/:cid", realtedProductController);
 
 //category wise product
-router.get("/product-category/:id", productCategoryController);
+router.get("/product-category/:slug", productCategoryController);
 
 router.put("/trending/:id", updateTradingProduct);
 

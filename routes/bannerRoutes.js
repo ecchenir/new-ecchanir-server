@@ -1,30 +1,43 @@
-import express from 'express'
+import express from "express";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
-import formidable from 'express-formidable';
-import { bannerPhotoController, createBannerController, deleteBannerController, getBannerController, getSingleBannerController, updateBannerController } from "../controllers/bannerController.js";
-
+import formidable from "express-formidable";
+import {
+  createBannerController,
+  deleteBannerController,
+  getBannerController,
+  getSingleBannerController,
+  updateBannerController,
+} from "../controllers/bannerController.js";
 
 const router = express.Router();
 
 //routes
 
 //create banner
-router.post('/create-banner', requireSignIn, isAdmin, formidable(), createBannerController);
+router.post(
+  "/create-banner",
+  requireSignIn,
+  isAdmin,
+  formidable(),
+  createBannerController
+);
 //Update product
-router.put('/update-banner/:pid', requireSignIn, isAdmin, formidable(), updateBannerController);
+router.put(
+  "/update-banner/:pid",
+  requireSignIn,
+  isAdmin,
+  formidable(),
+  updateBannerController
+);
 
 //get products
-router.get('/get-banner', getBannerController);
+router.get("/get-banner", getBannerController);
 
 //single products
 
-router.get('/get-banner/:slug', getSingleBannerController);
-
-//get photo
-router.get('/banner-photo/:pid', bannerPhotoController);
-
+router.get("/get-banner/:name", getSingleBannerController);
 
 //delete product
-router.delete('/delete-banner/:pid', deleteBannerController);
+router.delete("/delete-banner/:pid", deleteBannerController);
 
 export default router;

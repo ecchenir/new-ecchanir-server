@@ -97,10 +97,7 @@ export const getBannerController = async (req, res) => {
 
 export const getSingleBannerController = async (req, res) => {
   try {
-    const product = await bannerModel
-      .findOne({  name: req.params.name })
-      .select("-photo")
-      .populate("category");
+    const product = await bannerModel.findOne({ name: req.params.name });
     res.status(200).send({
       success: true,
       message: "Single product fetched",
@@ -111,25 +108,6 @@ export const getSingleBannerController = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error in get single products",
-      error,
-    });
-  }
-};
-
-//get bannerPhotoController
-
-export const bannerPhotoController = async (req, res) => {
-  try {
-    const product = await bannerModel.findById(req.params.pid).select("photo");
-    if (product.photo.data) {
-      res.set("Content-type", product.photo.contentType);
-      return res.status(200).send(product.photo.data);
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Error in get photo",
       error,
     });
   }
@@ -158,29 +136,23 @@ export const deleteBannerController = async (req, res) => {
 
 export const updateBannerController = async (req, res) => {
   try {
-    const { name, slug, category } = req.fields;
-    const { photo } = req.files;
+    const { name, photo } = req.fields;
+
     //validation
     switch (true) {
       case !name:
         return res.status(500).send({ error: "Name required" });
 
-      case !category:
-        return res.status(500).send({ error: "Category required" });
-      case photo && photo.size > 5000000:
-        return res
-          .status(500)
-          .send({ error: "photo is Required and should be less then 1mb" });
+      case !photo:
+        return res.status(500).send({ error: "photo required" });
     }
+
     const products = await bannerModel.findByIdAndUpdate(
       req.params.pid,
-      { ...req.fields, slug: slugify(name) },
+      { ...req.fields},
       { new: true }
     );
-    if (photo) {
-      products.photo.data = fs.readFileSync(photo.path);
-      products.photo.contentType = photo.type;
-    }
+
     await products.save();
     res.status(201).send({
       success: true,

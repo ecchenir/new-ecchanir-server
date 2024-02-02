@@ -36,7 +36,7 @@ export const getBannerController = async (req, res) => {
 //getSingleBannerController
 
 export const getSingleBannerController = async (req, res) => {
-  const id = req.params.id;
+  
   try {
     const product = await bannerModel.findById(req.params.id);
     res.status(200).send({

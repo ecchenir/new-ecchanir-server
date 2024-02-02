@@ -22,67 +22,7 @@ export const createBannerController = async (req, res) => {
       .status(500)
       .json({ error: "An error occurred while creating the Banner" });
   }
-
-  // try {
-  //     const {name,slug,category,} = req.fields;
-  //     const {photo} = req.files;
-  //     //validation
-  //     switch(true){
-  //         case !name:
-  //             return res.status(500).send({error:'Name required'})
-  //             case !category:
-  //             return res.status(500).send({error:'Category required'})
-  //             case photo && photo.size > 5000000:
-  //                 return res
-  //                   .status(500)
-  //                   .send({ error: "photo is Required and should be less then 1mb" });
-  //     }
-  //     const products = new bannerModel({...req.fields, slug:slugify(name)})
-  //     if(photo){
-  //         products.photo.data = fs.readFileSync(photo.path)
-  //         products.photo.contentType = photo.type
-  //     }
-  //     await products.save();
-  //     res.status(201).send({
-  //         success:true,
-  //         message:'Product Created Successfully',
-  //         products,
-  //     });
-  // } catch (error) {
-  //     console.log(error)
-  //     res.send(500).send({
-  //         success:false,
-  //         message:'Error in Create Product',
-  //         error,
-  //     })
-  // }
 };
-
-//getBannerController
-
-// export const getBannerController = async (req, res) => {
-//   try {
-//     const products = await bannerModel
-//       .find({})
-//       .populate("category")
-//       .limit(20)
-//       .sort({ createdAt: -1 });
-//     res.status(200).send({
-//       success: true,
-//       countTotal: products.length,
-//       message: "All Products",
-
-//       products,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Error in get products",
-//       error,
-//     });
-//   }
-// };
 
 export const getBannerController = async (req, res) => {
   try {
@@ -96,8 +36,9 @@ export const getBannerController = async (req, res) => {
 //getSingleBannerController
 
 export const getSingleBannerController = async (req, res) => {
+  const id = req.params.id;
   try {
-    const product = await bannerModel.findOne({ name: req.params.name });
+    const product = await bannerModel.findById(req.params.id);
     res.status(200).send({
       success: true,
       message: "Single product fetched",
@@ -149,7 +90,7 @@ export const updateBannerController = async (req, res) => {
 
     const products = await bannerModel.findByIdAndUpdate(
       req.params.pid,
-      { ...req.fields},
+      { ...req.fields },
       { new: true }
     );
 

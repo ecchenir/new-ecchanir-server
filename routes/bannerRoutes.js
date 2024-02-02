@@ -35,7 +35,7 @@ router.get("/get-banner", getBannerController);
 
 //single products
 
-router.get("/get-banner/:name", getSingleBannerController);
+router.get("/get-banner/:id", getSingleBannerController);
 
 //delete product
 router.delete("/delete-banner/:pid", deleteBannerController);

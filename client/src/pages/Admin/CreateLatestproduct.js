@@ -5,6 +5,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Select } from "antd";
 import { useNavigate } from "react-router-dom";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 const { Option } = Select;
 
 const Checkbox = ({ option, onChange }) => (
@@ -29,60 +31,114 @@ const CreateLatestproduct = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
-  const [quantity, setQuantity] = useState("");
   const [photo, setPhoto] = useState("");
-  const [rating, setRating] = useState("");
+  const [discount, setDiscount] = useState("");
   const [productNumber, setProductNumber] = useState("");
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const options = ["M", "L", "XL", "XXL"];
+  const options = ["S", "M", "L", "XL", "XXL"];
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [subcategories, setSubcategories] = useState([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState("");
+  const [file, setFile] = useState();
+  const [imageUrl, setImageURL] = useState(null);
 
   //get all category
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
-        "https://new-ecchanir-server.vercel.app/api/v1/category/get-category"
+        "https://new-ecchanir-server.vercel.app/api/v1/category/get-allcategory"
       );
-      if (data?.success) {
-        setCategories(data?.category);
-      }
+      setCategories(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong in getting category");
     }
   };
-
   useEffect(() => {
     getAllCategory();
   }, []);
 
+  function handleImage(event) {
+    setFile(event.target.files[0]);
+    setImageURL(URL.createObjectURL(event.target.files[0]));
+  }
+
   //create product function
   const handleCreate = async (e) => {
+    if (!file) {
+      console.error("Please select an image");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "ddlqhzgu"); // Replace with your upload preset
+    formData.append("api_key", "938218558923326"); // Replace with your API key
+
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/duqer4nsr/image/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+    console.log("Image uploaded:", result.secure_url);
+
     e.preventDefault();
+    // Validate required fields
+    if (
+      !name ||
+      !description ||
+      !price ||
+      !category ||
+      !selectedSubcategory ||
+      !discount ||
+      !selectedOptions ||
+      !productNumber
+    ) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
     try {
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
       productData.append("price", price);
-      productData.append("quantity", quantity);
-      productData.append("photo", photo);
+      productData.append("photo", result.secure_url);
       productData.append("category", category);
-      productData.append("selectedOptions", selectedOptions);
-      productData.append("rating", rating);
+      productData.append("selectedSubcategory", selectedSubcategory);
+      productData.append("discount", discount);
+      productData.append("selectedOptions", JSON.stringify(selectedOptions));
       productData.append("productNumber", productNumber);
 
-      const { data } = axios.post(
+      const { data } = await axios.post(
         "https://new-ecchanir-server.vercel.app/api/v1/latestproduct/create-latestproduct",
         productData
       );
+
       if (data?.success) {
-        toast.error(data?.message);
-      } else {
         toast.success("Product Created Successfully");
-        // navigate("/dashboard/admin/latestproducts");
+        navigate("/dashboard/admin/latestproducts");
+        // Clear form fields
+        // setName("");
+        // setDescription("");
+        // setPrice("");
+        // setCategory("");
+        // setQuantity("");
+        // setPhoto("");
+        // setDiscount("");
+        // setRating("");
+        // setProductNumber("");
+        // setSelectedOptions([]);
+        // navigate("/dashboard/admin/products");
       }
     } catch (error) {
       console.log(error);
-      toast.error("something went wrong");
+      toast.error("Something went wrong");
     }
   };
 
@@ -112,64 +168,10 @@ const CreateLatestproduct = () => {
             <AdminMenu />
           </div>
           <div className="col-md-9">
-            <h1>Create Latest Product</h1>
+            <h1>Create latest Product</h1>
+
             <div className="m-1 w-75">
-              <Select
-                bordered={false}
-                placeholder="Select a category"
-                size="large"
-                showSearch
-                className="form-select mb-3"
-                onChange={(value) => {
-                  setCategory(value);
-                }}
-              >
-                {categories?.map((c) => (
-                  <Option key={c._id} value={c._id}>
-                    {c.name}
-                  </Option>
-                ))}
-              </Select>
-              <div className="mb-3">
-                <label className="btn btn-outline-success  col-md-12">
-                  {photo ? photo.name : "Upload Photo"}
-                  <input
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
-                    hidden
-                  />
-                </label>
-              </div>
-              <div className="mb-3">
-                {photo && (
-                  <div className="text-center">
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt="product_photo"
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="mb-3 mt-3">
-                <div>
-                  <h4>Select Size Options:</h4>
-                  {options.map((option) => (
-                    <Checkbox
-                      key={option}
-                      option={option}
-                      onChange={handleOptionChange}
-                    />
-                  ))}
-                  <div>
-                    <h4>Selected Size:</h4>
-                    <p>{selectedOptions.join(", ")}</p>
-                  </div>
-                </div>
-              </div>
+              {/* image */}
 
               <div className="mb-3">
                 <input
@@ -180,58 +182,134 @@ const CreateLatestproduct = () => {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
-                <textarea
-                  type="text"
-                  value={description}
-                  placeholder="write a description"
-                  className="form-control"
-                  onChange={(e) => setDescription(e.target.value)}
+                <CKEditor
+                  editor={ClassicEditor}
+                  onReady={(editor) => {}}
+                  onChange={(event, editor) => {
+                    const data = editor.getData();
+                    setDescription(data); // Assuming you have state for shortDescription
+                  }}
                 />
+              </div>
+
+              <div className="mb-3 mt-3">
+                <div>
+                  <h4>Select Size Options:</h4>
+                  {options.map((option) => (
+                    <Checkbox
+                      key={option}
+                      option={option}
+                      onChange={handleOptionChange}
+                    />
+                  ))}
+                  {/* <div>
+                    <h4>Selected Size:</h4>
+                    <p>{selectedOptions.join(", ")}</p>
+                  </div> */}
+                </div>
               </div>
 
               <div className="mb-3">
                 <input
                   type="number"
                   value={price}
-                  placeholder="write a Price"
+                  placeholder="Write a Price"
                   className="form-control"
                   onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="number"
-                  value={quantity}
-                  placeholder="write a quantity"
-                  className="form-control"
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="number"
-                  value={rating}
-                  placeholder="write a Rating"
-                  className="form-control"
-                  onChange={(e) => setRating(e.target.value)}
                   required
                 />
               </div>
+
+              <div className="mb-3">
+                <input
+                  type="number"
+                  value={discount}
+                  placeholder="Discount Price"
+                  className="form-control"
+                  onChange={(e) => setDiscount(e.target.value)}
+                />
+              </div>
+
               <div className="mb-3">
                 <input
                   type="text"
                   value={productNumber}
-                  placeholder="Write a Product Number"
+                  placeholder="Product code"
                   className="form-control"
                   onChange={(e) => setProductNumber(e.target.value)}
                   required
                 />
               </div>
 
-              <div className="mb-3">
+              <label htmlFor=""> Select Category</label>
+              <Select
+                bordered={false}
+                placeholder="Select a category"
+                size="large"
+                showSearch
+                className="form-select mb-3"
+                onChange={(value) => {
+                  setSelectedCategory(value);
+                  setCategory(value);
+                  // Fetch and set subcategories based on the selected category
+                  const selectedCategoryData = categories.find(
+                    (cat) => cat._id === value
+                  );
+                  setSubcategories(selectedCategoryData?.subCategory || []);
+                  setSelectedSubcategory(""); // Reset selected subcategory when category changes
+                }}
+              >
+                {categories?.map((c) => (
+                  <Option key={c._id} value={c._id}>
+                    {c.name}
+                  </Option>
+                ))}
+              </Select>
+              <label htmlFor=""> Select Sub Category</label>
+              <Select
+                bordered={false}
+                placeholder="Select Subcategory"
+                size="large"
+                showSearch
+                className="form-select mb-3"
+                value={selectedSubcategory}
+                onChange={(value) => setSelectedSubcategory(value)}
+              >
+                {subcategories.map((subcat) => (
+                  <Option key={subcat} value={subcat}>
+                    {subcat}
+                  </Option>
+                ))}
+              </Select>
+
+              {/* image section */}
+              {imageUrl && ( // Display the image only when imageURL is not empty
+                <div item xs={12}>
+                  <img
+                    src={imageUrl}
+                    alt="Uploaded"
+                    placeholder="photo"
+                    height={"200px"}
+                    className="h-40 w-40 border-2"
+                    style={{ maxWidth: "100%" }}
+                  />
+                </div>
+              )}
+              <div item xs={6}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  name="image"
+                  id=""
+                  onChange={handleImage}
+                />
+              </div>
+
+              <div className="mb-3 d-flex justify-content-end">
                 <button className="btn btn-success" onClick={handleCreate}>
-                  CREATE Latest PRODUCT
+                  CREATE PRODUCT
                 </button>
               </div>
             </div>

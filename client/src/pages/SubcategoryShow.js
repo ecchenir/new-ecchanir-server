@@ -11,6 +11,8 @@ export default function SubcategoryShow() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const params = useParams();
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   // console.log(params.name);
 
@@ -20,13 +22,16 @@ export default function SubcategoryShow() {
 
   const getAllProducts = async () => {
     try {
+      setLoading(true);
       const { data } = await axios.get(
-        `https://new-ecchanir-server.vercel.app/api/v1/product/get-product`
+        `https://new-ecchanir-server.vercel.app/api/v1/product/product-list/${page}`
       );
-      // setLoading(false);
+      setLoading(false);
+      // console.log(data);
       setProducts(data.products);
       // console.log(data.products);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };
@@ -35,12 +40,16 @@ export default function SubcategoryShow() {
     getAllProducts();
   }, []);
 
+  const handleSeeMore = () => {
+    setPage(page + 1);
+  };
+
   const fetchProduct = products.filter(
     (item) => item.selectedSubcategory === `${params?.name}`
+
     // (item) => item.selectedSubcategory === " Denaim shart"
   );
 
-  // console.log(products);
   // console.log(fetchProduct);
 
   return (
@@ -62,28 +71,21 @@ export default function SubcategoryShow() {
                       width: "100%",
                       minHeight: "168px",
                     }}
-                    src={`https://new-ecchanir-server.vercel.app/api/v1/product/product-photo/${p._id}`}
+                    src={p.photo}
                     className="card-img-top"
                     // height={"150px"}
                     alt={p.name}
                   />
                   <div className="card-body">
-                    <h5 className="cardTitle">
+                    <h5 className="cardTitle">{p.name}</h5>
+                    {/* <h5 className="cardTitle">
                       {p.name.length <= 20
                         ? p.name
                         : `${p.name.substring(0, 20)}...`}
-                    </h5>
+                    </h5> */}
 
                     <p className="discountPrice">৳ {p.price}</p>
                     <p className="price">৳ {p.discount}</p>
-                    {/* <Rating
-                    className="ml-3"
-                    placeholderRating={p.rating}
-                    readonly
-                    emptySymbol={<FaRegStar></FaRegStar>}
-                    placeholderSymbol={<FaStar className='text-warning'></FaStar>}
-                    fullSymbol={<FaStar></FaStar>}
-                  /> */}
                   </div>
                 </Card>
               </Col>

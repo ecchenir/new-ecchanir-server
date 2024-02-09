@@ -5,16 +5,14 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import "../styles/Homepage.css";
-import { AiOutlineReload } from "react-icons/ai";
 import LatestProduct from "./LatestProduct";
 import ShowCategories from "./ShowCategories";
 import { useCart } from "../context/cart";
-import { FaRegStar, FaStar } from "react-icons/fa";
-import Rating from "react-rating";
-
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
+import SubcategoryHeader from "./SubcategoryHeader";
+import Spinner from "../components/Loader/Spinner";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -50,38 +48,6 @@ const HomePage = () => {
     getTotal();
   }, []);
 
-  // //get products
-  // const getAllProducts = async () =>{
-  //   try {
-  //     const {data} = await axios.get("https://new-ecchanir-server.vercel.app/api/v1/product/get-product");
-  //     setProducts(data.products);
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // };
-
-  // useEffect(()=>{
-  //   getAllProducts();
-  // });
-
-  // filter by cat
-  // const handleFilter = (value, id) => {
-  //   let all = [...checked];
-  //   if (value) {
-  //     all.push(id);
-  //   } else {
-  //     all = all.filter((c) => c !== id);
-  //   }
-  //   setChecked(all);
-  // };
-  // useEffect(() => {
-  //   if (!checked.length || !radio.length) getAllProducts();
-  // }, [checked.length, radio.length]);
-
-  // useEffect(() => {
-  //   if (checked.length || radio.length) filterProduct();
-  // }, [checked, radio]);
-
   //get products
   const getAllProducts = async () => {
     try {
@@ -89,12 +55,16 @@ const HomePage = () => {
       const { data } = await axios.get(
         `https://new-ecchanir-server.vercel.app/api/v1/product/product-list/${page}`
       );
-      setLoading(false);
       setProducts(data.products);
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log(error);
     }
+  };
+
+  const handleSeeMore = () => {
+    setPage(page + 1);
   };
 
   //getTOtal COunt
@@ -167,45 +137,53 @@ const HomePage = () => {
   // console.log(products);
   return (
     <Layout>
+      <SubcategoryHeader />
       <Banner />
       {/* show category product */}
       <ShowCategories />
 
-      <h2 className="p-2 text-center lg:mt-5 md:mt-3 show">
-        EccheNir Products
-      </h2>
       {/* .........❤️❤️❤️❤️❤️❤️....... */}
       {/* show product */}
-      <div className="container">
-        <Row xs={2} sm={3} md={4} lg={4} className="xs:g-2 g-3">
-          {products.map((p) => (
-            <Col key={p._id}>
-              <Card
-                onClick={() => navigate(`/product/${p.slug}`)}
-                className="productCard"
-              >
-                <img
-                  style={{
-                    objectFit: "cove",
-                    width: "100%",
-                    minHeight: "200px",
-                  }}
-                  src={`https://new-ecchanir-server.vercel.app/api/v1/product/product-photo/${p._id}`}
-                  className="card-img-top"
-                  // height={"150px"}
-                  alt={p.name}
-                />
-                <div className="card-body">
-                  <h5 className="cardTitle">
-                    {" "}
-                    {p.name.length <= 20
-                      ? p.name
-                      : `${p.name.substring(0, 20)}...`}
-                  </h5>
 
-                  <p className="discountPrice">{p.price}Taka</p>
-                  <p className="price">{p.discount}Taka</p>
-                  {/* <Rating
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="container">
+          <h2 className="p-2 text-center lg:mt-5 w-100% mt-3 show">
+            EccheNir Products
+          </h2>
+
+          <Row xs={2} sm={3} md={4} lg={4} className="xs:g-2 g-2">
+            {products.map((p) => (
+              <Col key={p._id}>
+                <Card
+                  onClick={() => navigate(`/product/${p._id}`)}
+                  // onClick={() => navigate(`/product/${p.slug}`)}
+                  className="productCard"
+                >
+                  <img
+                    style={{
+                      objectFit: "cover",
+                      width: "100%",
+                      minHeight: "168px",
+                    }}
+                    src={p.photo}
+                    className="card-img-top"
+                    // height={"150px"}
+                    alt={p.name}
+                  />
+
+                  <div className="card-body">
+                    <h5 className="cardTitle">{p.name}</h5>
+                    {/* <h5 className="cardTitle">
+                      {p.name.length <= 20
+                        ? p.name
+                        : `${p.name.substring(0, 20)}...`}
+                    </h5> */}
+
+                    <p className="discountPrice">৳ {p.price}</p>
+                    <p className="price">৳ {p.discount}</p>
+                    {/* <Rating
                     className="ml-3"
                     placeholderRating={p.rating}
                     readonly
@@ -213,15 +191,22 @@ const HomePage = () => {
                     placeholderSymbol={<FaStar className='text-warning'></FaStar>}
                     fullSymbol={<FaStar></FaStar>}
                   /> */}
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </div>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+
+          <div className="d-flex justify-content-center mt-3">
+            <button className="btn btn-primary  " onClick={handleSeeMore}>
+              See More
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* latestProduct */}
-      <LatestProduct />
+      <LatestProduct className="pt-5" />
     </Layout>
   );
 };

@@ -19,7 +19,7 @@ import Users from "./pages/Admin/Users";
 import Profile from "./pages/user/Profile";
 import Products from "./pages/Admin/Products";
 import Orders from "./pages/Admin/Orders";
-import Banners from "./pages/Admin/Banners";
+import Banners from "./pages/Admin/blogs";
 import UpdateProducts from "./pages/Admin/UpdateProducts";
 import UpdateBanners from "./pages/Admin/UpdateBanners";
 import Search from "./pages/Search";
@@ -39,23 +39,45 @@ import BuyNow from "./pages/Admin/BuyNow/BuyNow";
 import CompleatOrder from "./pages/Admin/BuyNow/CompleatOrder";
 import { useEffect } from "react";
 import axios from "axios";
+import SubcategoryShow from "./pages/SubcategoryShow";
+import Thanks from "./pages/user/Thanks";
+import CreateBloogs from "./pages/Admin/CreateBloogs";
 
 function App() {
   useEffect(() => {
     axios.defaults.baseURL = "https://new-ecchanir-server.vercel.app";
   }, []);
+
+  // useEffect(() => {
+  //   axios.defaults.baseURL = "http://localhost:5000";
+  // }, []);
   // "proxy": "http://localhost:2000"
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Optional: Adds smooth scrolling animation
+    });
+  }, []);
+
   return (
     <>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/product/:slug" element={<ProductDetails />} />
-        <Route path="/latestproduct/:slug" element={<LatestProductDetails />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        {/* <Route path="/product/:slug" element={<ProductDetails />} />
+        <Route path="/product/:slug" element={<ProductDetails />} /> */}
+
+        <Route path="/latestproduct/:id" element={<LatestProductDetails />} />
+        {/* <Route path="/latestproduct/:slug" element={<LatestProductDetails />} /> */}
         <Route path="/cart" element={<CartPage />} />
         <Route path="/CreateOrder" element={<CreateOrder />} />
         <Route path="/buyNow" element={<BuyNow />} />
         <Route path="/categories" element={<Categories />} />
-        <Route path="/category/:slug" element={<CategoryProduct />} />
+        <Route path="/category/:id" element={<CategoryProduct />} />
+        <Route path="/subcategory/:name" element={<SubcategoryShow />} />
+
         <Route path="/search" element={<Search />} />
         <Route path="/dashboard" element={<PrivateRoute />}>
           {/* <Route path="user/orders"  element={<Orders/>}/> */}
@@ -72,13 +94,15 @@ function App() {
             element={<CreateLatestproduct />}
           />
           <Route path="admin/create-banner" element={<CreateBanner />} />
+          <Route path="admin/create-blogs" element={<CreateBloogs />} />
+
           <Route path="admin/product/:slug" element={<UpdateProducts />} />
           <Route
             path="admin/latestproduct/:slug"
             element={<UpdateLatestproducts />}
           />
           <Route path="admin/compleatOrder/:id" element={<CompleatOrder />} />
-          <Route path="admin/banner/:slug" element={<UpdateBanners />} />
+          <Route path="admin/banner/:name" element={<UpdateBanners />} />
           <Route path="admin/order/:slug" element={<UpdateOrders />} />
 
           <Route path="admin/products" element={<Products />} />
@@ -88,6 +112,7 @@ function App() {
           <Route path="admin/users" element={<Users />} />
         </Route>
         <Route path="/register" element={<Register />} />
+        <Route path="/thanks/:id" element={<Thanks />} />
 
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/login" element={<Login />} />

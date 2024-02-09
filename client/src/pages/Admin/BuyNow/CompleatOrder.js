@@ -1,92 +1,196 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../../../components/Layout/Layout";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
-import ReactToPrint from "react-to-print";
+import { useNavigate } from "react-router-dom";
 import Card from "react-bootstrap/Card";
+import { Button } from "react-bootstrap";
+import AdminMenu from "../../../components/Layout/AdminMenu";
 
 export default function CompleatOrder() {
   const { id } = useParams(); // Correctly extract 'id' from the URL parameters
   const [order, setOrder] = useState({});
-  console.log(id);
+  const [Product, setProduct] = useState([]);
+  const navigate = useNavigate();
 
-  const getAllProducts = async () => {
+  // console.log(id);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(
+          `https://new-ecchanir-server.vercel.app/api/v1/order/get-orders/${id}`
+        );
+        setOrder(data?.SingleProduct);
+        setProduct(data.SingleProduct.products || []);
+        // Use optional chaining to handle undefined data
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData(); // Invoke the fetchData function
+  }, [id]);
+
+  // console.log(Product);
+
+  // oder  confirm functionality
+  const handleConfirm = async (id) => {
     try {
-      const { data } = await axios.get(
-        `https://new-ecchanir-server.vercel.app/api/v1/order/get-orders/${id}`
+      const data = { status: "complete" };
+      // console.log("Button clicked");
+      const updateOrder = await axios.put(
+        `https://new-ecchanir-server.vercel.app/api/v1/order/update-order/${id}`,
+        data
       );
-      setOrder(data.product);
+
+      console.log("Axios Response", updateOrder);
+      navigate(`/dashboard/admin/orders`);
     } catch (error) {
-      console.log(error);
+      console.error("Error updating data", error);
     }
   };
 
-  // console.log(order);
+  // oder delete functionality
 
-  useEffect(() => {
-    getAllProducts();
-  }, [id]); // Add 'id' as a dependency to the useEffect hook
+  const handleCancel = async (id) => {
+    try {
+      const data = { status: "cancel" };
+      // console.log("Button clicked");
+      const updateOrder = await axios.put(
+        `https://new-ecchanir-server.vercel.app/api/v1/order/update-order/${id}`,
+        data
+      );
+      console.log("Axios Response", updateOrder);
+      navigate(`/dashboard/admin/orders`);
+    } catch (error) {
+      console.error("Error updating data", error);
+    }
+  };
 
   return (
     <Layout>
-      <p className="text-center fw-bold  mt-5"> Order Details</p>
+      <div className="container-fluid m-3 p-3">
+        <div className="row">
+          <div className="col-md-3">
+            <AdminMenu />
+          </div>
+          <div className="col-md-9">
+            <p className="text-center fw-bold display-6  mt-5">
+              EccheNir E-commerce
+            </p>
+            <p className="text-center fw-bold display-6 ">
+              {" "}
+              Order Details
+            </p>
+            <p className="text-uppercase text-danger text-center d-flex justify-content-center gap-2">
+              <span> Order Id: </span> <p>EN{id.slice(-6)} </p>
+            </p>
 
-      <Card className="mx-auto w-75">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Customer Name</th>
-              <th scope="col"> : {order.slug} </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="fw-medium">Phone</td>
-              <td>: {order.phone}</td>
-            </tr>
-            <tr></tr>
-            <tr>
-              <td>District </td>
-              <td>: {order.selectedDistrict}</td>
-            </tr>
-            <tr>
-              <td>Address </td>
-              <td>: {order.address}</td>
-            </tr>
-            <tr>
-              <td>Order Date </td>
-              <td>: {new Date(order.createdAt).toLocaleString()}</td>
-            </tr>
-            <tr>
-              <td>Product Id </td>
-              <td>: {order.productNumber}</td>
-            </tr>
+            <Card className="mx-auto">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col"> : {order?.names} </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="fw-medium">Phone</td>
+                    <td>: {order?.phone}</td>
+                  </tr>
+                  <tr>
+                    <td>Division </td>
+                    <td>: {order?.selectedDistrict}</td>
+                  </tr>
+                  <tr>
+                    <td>District </td>
+                    <td>: {order?.selectedDistrict}</td>
+                  </tr>
+                  <tr>
+                    <td>Address </td>
+                    <td>: {order?.address}</td>
+                  </tr>
+                  <tr>
+                    <td>Order Date </td>
+                    <td>: {new Date(order.createdAt).toLocaleString()}</td>
+                  </tr>
 
-            <tr>
-              <td className="fw-medium">Product Size</td>
-              <td>: {order.size}</td>
-            </tr>
-            <tr>
-              <td>Quantities </td>
-              <td>: {order.quantities}</td>
-            </tr>
-            <tr>
-              <td> Shaping Charge </td>
-              <td>: {order.delivery}</td>
-            </tr>
+                  <tr>
+                    <td> Shaping Charge </td>
+                    <td>: {order?.deliveryCharge}</td>
+                  </tr>
 
-            <tr>
-              <td>Total Amount </td>
-              <td>: {order.amount}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div className="d-flex justify-content-end mb-3">
-          <Link to="/dashboard/admin/orders" className="btn btn-dark">
-            Check Other Orders
-          </Link>
+                  <tr>
+                    <td>Total Amount </td>
+                    <td>: {order?.subTotal}</td>
+                  </tr>
+                  <tr>
+                    <td>Total Payable Amount </td>
+                    <td>: {order?.totalWithDelivery}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="container">
+                <p className="display-6 text-center">Order Summary</p>
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">SL</th>
+                      <th scope="col">Photo</th>
+                      <th scope="col">Product Code</th>
+                      <th scope="col">Size</th>
+                      <th scope="col">Quantity</th>
+                      <th scope="col"> Price</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  {Product.map((p, index) => (
+                    <tbody key={index}>
+                      <tr>
+                        <th scope="row">{index + 1}</th>
+                        <td>
+                          {" "}
+                          <img height={100} src={p.photo} alt="" />{" "}
+                        </td>
+                        <td>{p.productNumber}</td>
+                        <td>{p.selectedSize}</td>
+                        <td>{p.quantity}</td>
+                        <td>{p.price}</td>
+                      </tr>
+                    </tbody>
+                  ))}
+                </table>
+              </div>
+
+              <div className="d-flex justify-content-between px-2 pb-3">
+                <Button
+                  variant="danger"
+                  onClick={() => handleCancel(order._id)}
+                >
+                  Cancel
+                </Button>
+
+                <Button
+                  variant="success"
+                  onClick={() => handleConfirm(order._id)}
+                >
+                  Confirm
+                </Button>
+              </div>
+
+              {/* <div className="d-flex justify-content-end mb-3">
+<Link to="/dashboard/admin/orders" className="btn btn-dark">
+  Check Other Orders
+</Link>
+</div> */}
+            </Card>
+          </div>
         </div>
-      </Card>
+      </div>
     </Layout>
   );
 }

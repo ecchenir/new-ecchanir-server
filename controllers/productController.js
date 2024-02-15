@@ -125,8 +125,6 @@ export const getSingleProductController = async (req, res) => {
   }
 };
 
- 
-
 //deleteProductController
 
 export const deleteProductController = async (req, res) => {

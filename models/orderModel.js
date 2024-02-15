@@ -40,6 +40,10 @@ const orderSchema = new mongoose.Schema(
           type: String,
           required: false,
         },
+        discount: {
+          type: String,
+          required: false,
+        },
       },
     ],
 

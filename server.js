@@ -66,9 +66,9 @@ app.use("/api/v1/blogs", blogRoute);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Serve static files for the React app
-// app.use("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "./client/build/index.html"));
-// });
+app.use("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
 
 // PORT
 const PORT = process.env.PORT || 7000;

@@ -67,7 +67,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Serve static files for the React app
 app.use("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "./client/build/index.html"));
+  res.sendFile(path.join(__dirname, "./website/build/index.html"));
 });
 
 // PORT
